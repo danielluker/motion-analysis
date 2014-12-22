@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Visual Analysis</string>
+    <string name="start">Start</string>
+    <string name="stop">Stop</string>
+    <string name="title_activity_image_screen">Image Capture</string>
+    <string name="title_activity_location_screen">Location Capture</string>
+    <string name="title_activity_select_screen_1">Please select mode</string>
+    <string name="title_activity_location_select">Please select mode</string>
+    <string name="action_settings">Settings</string>
+    <string name="take_photo">Take Photo</string>
+    <string name="open_file">Open File</string>
+    <string name="settings">Settings</string>
+    <string name="cannot">Cannot</string>
+    <string name="album_name">VisualAnalysis</string>
+    <string name="imageView1_description">Shows image from camera or loaded file or allows user to directly paint on it</string>
+    <string name="imageView2_description">Shows grafical representation of data collected from GPS</string>
+    <string name="imageView_satellite">Decorative image</string>
+	<string name="clear">Clear</string>
+	<string name="interpolate">Interpolate</string>
+	<string name="warning1">Please select at least 2 points on the canvas!</string>
+	<string name="warning2">Please select points first!</string>
+	<string name="error_location">Cannot access location service!</string>
+	<string name="error_location_temp">Location service temporarily unavailable :-(</string>
+	<string name="location_start">Commencing location data acquisition, please stand by for GPS signal</string>
+	<string name="location_resume">Location data acquisition resumed :-)</string>
+	<string name="image_analysis">Image analysis</string>
+	<string name="location_analysis">Location analysis</string>
+	<string name="path_tracker">Path Tracker</string>
+	<string name="distance_tracker">Distance Tracker</string>
+	<string name="gps_success">GPS signal received!</string>
+	<string name="gps_wait">Please stand by for GPS signal</string>
+	<string name="image_restore">Restore</string>
+	<string name="derivative">Derivative</string>
+	<string name="integral">Integral</string>
+	<string name="derivative_instruction">Please select point at which to calculate x-derivative</string>
+	<string name="integrate_instruction">Please place first and last point of interval</string>
+	<string name="calculate">Calculate</string>
+	<string name="image">Image</string>
+	<string name="select_lagrange">Selected Lagrange Polynomial Interpolation</string>
+	<string name="select_spline">Selected cubic spline interpolation</string>
+	<string name="select_loess">Selected LOESS Interpolation</string>
+	<string name="application_logo">Application logo</string>
+</resources>
