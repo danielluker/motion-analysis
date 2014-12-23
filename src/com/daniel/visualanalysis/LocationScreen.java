@@ -2,15 +2,18 @@ package com.daniel.visualanalysis;
 
 import java.util.ArrayList;
 
-//import com.daniel.visualanalysis.util.CubeSplineInterpolator;
-import com.daniel.visualanalysis.util.DialogueShower;
-import com.daniel.visualanalysis.util.Interpolator;
-//import com.daniel.visualanalysis.util.LocalRegressionInterpolator;
-import com.daniel.visualanalysis.util.PolynomialInterpolator;
-import com.daniel.visualanalysis.util.LocationUpdater;
+
+
+
+
+
+
+
+import com.daniel.visualanalysis.util.*;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.SupportMapFragment;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -21,17 +24,19 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.location.*;
 import android.os.Bundle;
+import android.os.Looper;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.app.FragmentActivity;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
-public class LocationScreen extends Activity {
+public class LocationScreen extends FragmentActivity {
 	
 	public Paint BLACK_PAINT;
 	public Paint BLUE_PAINT;
@@ -62,26 +67,27 @@ public class LocationScreen extends Activity {
 	
 	public TextView mDistanceDisplay;
 	public TextView mTimeDisplay;
-	public ImageView mImageView;	
 	public Bitmap mCurrentBitmap;
+	public GoogleMap googleMap;
 	
 	private String ACTION;
 	private String TYPE_OF_INTERPOLATION="LAGRANGE";
 	
 	public static final int STEP_SIZE = 200;
 	private final float BITMAP_OFFSET = 4; 
+	private static LocationScreen mLocationScreen;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.location_screen);
+		mLocationScreen = this;
 
 		Button mStartButton = (Button) findViewById(R.id.buttonStart);
 		Button mStopButton = (Button) findViewById(R.id.buttonStop);
 		Button mCalculateButton = (Button) findViewById(R.id.calculateButton);
 		Button mSettingsButton = (Button) findViewById(R.id.settingsButton);
-		
-		mImageView = (ImageView) findViewById(R.id.imageView1);
+
 		mTimeDisplay = (TextView) findViewById(R.id.time_display);
 		mDistanceDisplay = (TextView) findViewById(R.id.distance_display);	
 			
@@ -89,8 +95,6 @@ public class LocationScreen extends Activity {
 		mStopButton.setOnClickListener(mStopOnClickListener);
 		mCalculateButton.setOnClickListener(mCalcOnClickListener);
 		mSettingsButton.setOnClickListener(mSettingsBtnOnClickListener);
-		
-		mImageView.setOnTouchListener(mImageViewOnTouchListener);
 		
 		GPS_TIME_INTERVAL = 5000;
 		
@@ -109,15 +113,18 @@ public class LocationScreen extends Activity {
 		
 		// Default interpolation = LAGRANGE
 		mInterpolator = new PolynomialInterpolator(true); 
+
 		
 		registerBroadcastReceivers();
 		
 	}
+	
 
 	public void startTimer(){
 		startTime = System.currentTimeMillis();
 		TIME_RUNNING = true;
 	}
+	
 	public void registerBroadcastReceivers(){ 
 		LocalBroadcastManager.getInstance(this).registerReceiver(mLocationReceiver, new IntentFilter("LOCATION_UPDATE"));
 		LocalBroadcastManager.getInstance(this).registerReceiver(mStatusReceiver, new IntentFilter("STATUS_UPDATE"));
@@ -127,6 +134,9 @@ public class LocationScreen extends Activity {
 		LocalBroadcastManager.getInstance(this).registerReceiver(mSettingsReceiver, new IntentFilter("SETTINGS_BROADCAST"));
 	}
 
+	public static LocationScreen getInstance(){
+		return mLocationScreen;
+	}
 
 //=================================================LISTENERS===============
 	/***
@@ -145,8 +155,6 @@ public class LocationScreen extends Activity {
 			collectLocationInBackground(GPS_TIME_INTERVAL);
 				mTotalDistance = 0;
 				mInterpolator.addPoint(0,mTotalDistance);
-//				mInterpolator2.addPoint(0,mTotalDistance);
-//				mInterpolator3.addPoint(0,mTotalDistance);
 				mCurrentLocation = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 				v.setClickable(false);
 				findViewById(R.id.buttonStop).setClickable(true);
@@ -167,7 +175,6 @@ public class LocationScreen extends Activity {
 			CharSequence cs1 = "Total time = "+Long.toString(totalTime/1000)+"s";
 			mDistanceDisplay.setText(cs0);
 			mTimeDisplay.setText(cs1);
-			mImageView.setClickable(true);
 			return;
 		}
 	};
@@ -193,6 +200,7 @@ public class LocationScreen extends Activity {
 		}
 	};
 	
+	/*
 	@SuppressLint("NewApi")
 	ImageView.OnTouchListener mImageViewOnTouchListener = new ImageView.OnTouchListener() {	
 		@Override
@@ -239,6 +247,7 @@ public class LocationScreen extends Activity {
 			return false;				
 		}
 	};
+	*/
 	
 	private BroadcastReceiver mLocationReceiver = new BroadcastReceiver(){
 		@Override
@@ -310,7 +319,6 @@ public class LocationScreen extends Activity {
 				Log.e("Broadcast", "Error receiving selection broadcast");
 				return;
 			}
-			mImageView.setClickable(true);
 		}
 	};
 	
@@ -407,13 +415,21 @@ public class LocationScreen extends Activity {
 	private void updateGraph(){
 		if (mInterpolator.numberOfPoints()<3)
 			return;
-		mCurrentBitmap = drawPoints(mImageView);
-		mInterpolator.interpolateDistance(mImageView.getWidth(),mImageView.getHeight(),totalTime,mTotalDistance);
+//		mCurrentBitmap = drawPoints(mImageView);
+//		mInterpolator.interpolateDistance(mImageView.getWidth(),mImageView.getHeight(),totalTime,mTotalDistance);
 //		mInterpolator2.interpolateDistance(mImageView.getWidth(),mImageView.getHeight(),totalTime,mTotalDistance);
 //		mInterpolator3.interpolateDistance(mImageView.getWidth(),mImageView.getHeight(),totalTime,mTotalDistance);
-		mCurrentBitmap = drawPolynomial(mImageView);
-		mImageView.setImageBitmap(mCurrentBitmap);
+//		mCurrentBitmap = drawPolynomial(mImageView);
+//		mImageView.setImageBitmap(mCurrentBitmap);
 	}
+
+    public Handler getHandler() {
+        return new Handler(Looper.getMainLooper()) {
+            public void handleMessage(Message m) {
+            	googleMap = (GoogleMap) m.obj;
+            }
+        };
+    }
 	
 	//================================================RENDERING======================
 	
@@ -447,7 +463,7 @@ public class LocationScreen extends Activity {
 		}
 		mCanvas.drawPath(mPath, color); 
 	}
-		
+	/*
 	private Bitmap drawPoints(View v){
 		Log.v(ACTIVITY_SERVICE, "Drawing Points...");
 		mCurrentBitmap = Bitmap.createBitmap(mImageView.getWidth(), mImageView.getHeight(), Bitmap.Config.ARGB_8888);
@@ -506,4 +522,5 @@ public class LocationScreen extends Activity {
 		mImageView.setImageBitmap(newBitmap);
 		
 	}
+	*/
 }

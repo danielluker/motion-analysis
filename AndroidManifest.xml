@@ -4,16 +4,22 @@
     android:versionCode="1"
     android:versionName="1.0" >
 
-    <uses-sdk android:minSdkVersion="15" android:targetSdkVersion="21" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.CAMERA"/>
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-sdk
+        android:minSdkVersion="15"
+        android:targetSdkVersion="21" />
+
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" >
+
         <!-- TODO make my own theme -->
         <activity
             android:name="com.daniel.visualanalysis.FirstScreen"
@@ -23,10 +29,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="ImageScreen" android:label="@string/title_activity_image_screen"></activity>
-        <activity android:name="LocationScreen" android:label="@string/title_activity_location_screen"></activity>
-        <activity android:name="SelectScreen1" android:label="@string/title_activity_select_screen_1"></activity>
-        <activity android:name="LocationSelect" android:label="@string/title_activity_location_select"></activity>
+        <activity
+            android:name="ImageScreen"
+            android:label="@string/title_activity_image_screen" >
+        </activity>
+        <activity
+            android:name="LocationScreen"
+            android:label="@string/title_activity_location_screen" >
+        </activity>
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="AIzaSyAJz0SNHuSLs3ALhDKGOL9eilIh-EpYXAE" />
     </application>
 
 </manifest>
