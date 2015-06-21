@@ -164,6 +164,9 @@ public class LocationScreen extends FragmentActivity {
 		}
 	};
 	
+	/***
+	 * Implemented the listener
+	 */
 	Button.OnClickListener mStopOnClickListener = new Button.OnClickListener(){
 		@Override
 		public void onClick(View v){
